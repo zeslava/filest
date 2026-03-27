@@ -1,23 +1,23 @@
 #!/bin/sh
 set -e
 
-BIN_SRC="target/release/filestore-api"
-BIN_DST="/usr/local/bin/filestore"
-RC_SRC="crates/filestore-api/deploy/filestore-api.rc"
-RC_DST="/usr/local/etc/rc.d/filestore"
-ENV_SRC="crates/filestore-api/deploy/filestore-api.env"
-ENV_DST="/usr/local/etc/filestore.env"
-LOG="/var/log/filestore.log"
+BIN_SRC="target/release/filest"
+BIN_DST="/usr/local/bin/filest"
+RC_SRC="deploy/filest.rc"
+RC_DST="/usr/local/etc/rc.d/filest"
+ENV_SRC="deploy/filest.env"
+ENV_DST="/usr/local/etc/filest.env"
+LOG="/var/log/filest.log"
 
 if [ ! -f "${BIN_SRC}" ]; then
     echo "Binary not found at ${BIN_SRC}"
-    echo "Run: cargo build -p filestore-api --release"
+    echo "Run: cargo build --release"
     exit 1
 fi
 
-echo "Installing filestore..."
+echo "Installing filest..."
 
-service filestore stop 2>/dev/null || true
+service filest stop 2>/dev/null || true
 pkill -f "${BIN_DST}" 2>/dev/null || true
 sleep 1
 
@@ -39,9 +39,9 @@ fi
 touch "${LOG}"
 echo "  ${LOG}"
 
-if ! grep -q 'filestore_enable' /etc/rc.conf; then
-    echo 'filestore_enable="YES"' >> /etc/rc.conf
+if ! grep -q 'filest_enable' /etc/rc.conf; then
+    echo 'filest_enable="YES"' >> /etc/rc.conf
     echo "  Added to /etc/rc.conf"
 fi
 
-echo "Done. Edit ${ENV_DST} then: service filestore start"
+echo "Done. Edit ${ENV_DST} then: service filest start"

@@ -1,50 +1,50 @@
 #!/bin/sh
 
-# PROVIDE: filestore
+# PROVIDE: filest
 # REQUIRE: NETWORKING
 # KEYWORD: shutdown
 
 . /etc/rc.subr
 
-name="filestore"
-rcvar="filestore_enable"
+name="filest"
+rcvar="filest_enable"
 
 load_rc_config $name
 
-: ${filestore_enable:="NO"}
-: ${filestore_user:="www"}
-: ${filestore_env_file:="/usr/local/etc/filestore.env"}
-: ${filestore_log:="/var/log/filestore.log"}
+: ${filest_enable:="NO"}
+: ${filest_user:="www"}
+: ${filest_env_file:="/usr/local/etc/filest.env"}
+: ${filest_log:="/var/log/filest.log"}
 
 pidfile="/var/run/${name}/${name}.pid"
-command="/usr/local/bin/filestore"
+command="/usr/local/bin/filest"
 command_interpreter=""
 
 start_cmd="${name}_start"
 stop_cmd="${name}_stop"
 status_cmd="${name}_status"
 
-filestore_prestart()
+filest_prestart()
 {
-    if [ ! -f "${filestore_env_file}" ]; then
-        echo "${filestore_env_file} not found"
+    if [ ! -f "${filest_env_file}" ]; then
+        echo "${filest_env_file} not found"
         return 1
     fi
     mkdir -p /var/run/${name}
-    chown ${filestore_user} /var/run/${name}
-    touch ${filestore_log}
-    chown ${filestore_user} ${filestore_log}
+    chown ${filest_user} /var/run/${name}
+    touch ${filest_log}
+    chown ${filest_user} ${filest_log}
 }
 
-filestore_start()
+filest_start()
 {
-    filestore_prestart || return 1
+    filest_prestart || return 1
     echo "Starting ${name}."
-    /usr/sbin/daemon -f -P ${pidfile} -o ${filestore_log} \
-        /usr/bin/su -m ${filestore_user} -c ". ${filestore_env_file} && exec ${command}"
+    /usr/sbin/daemon -f -P ${pidfile} -o ${filest_log} \
+        /usr/bin/su -m ${filest_user} -c ". ${filest_env_file} && exec ${command}"
 }
 
-filestore_stop()
+filest_stop()
 {
     if [ -f "${pidfile}" ]; then
         echo "Stopping ${name}."
@@ -55,7 +55,7 @@ filestore_stop()
     fi
 }
 
-filestore_status()
+filest_status()
 {
     if [ -f "${pidfile}" ] && kill -0 $(cat ${pidfile}) 2>/dev/null; then
         echo "${name} is running as pid $(cat ${pidfile})."
