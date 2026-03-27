@@ -6,4 +6,4 @@ ENV LISTEN_ADDR=0.0.0.0:8090
 
 EXPOSE 8090
 
-CMD /usr/local/bin/filest
+SERVICE filest
