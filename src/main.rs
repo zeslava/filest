@@ -83,7 +83,7 @@ async fn main() {
             let listener = TcpListener::bind(&listen_addr)
                 .await
                 .unwrap_or_else(|e| panic!("Failed to bind to {listen_addr}: {e}"));
-            tracing::info!("filestore-api listening on http://{listen_addr}");
+            tracing::info!("filest listening on http://{listen_addr}");
             axum::serve(listener, app).await.unwrap();
         }
     }
@@ -119,7 +119,7 @@ async fn serve_tls(app: Router, listen_addr: &str, cert_path: &str, key_path: &s
         .await
         .unwrap_or_else(|e| panic!("Failed to bind to {listen_addr}: {e}"));
 
-    tracing::info!("filestore-api listening on https://{listen_addr}");
+    tracing::info!("filest listening on https://{listen_addr}");
 
     loop {
         match listener.accept().await {
@@ -159,7 +159,7 @@ fn generate_self_signed_cert() -> (
     quinn::rustls::pki_types::PrivateKeyDer<'static>,
 ) {
     let rcgen::CertifiedKey { cert, signing_key } =
-        rcgen::generate_simple_self_signed(vec!["localhost".into(), "filestore".into()])
+        rcgen::generate_simple_self_signed(vec!["localhost".into(), "filest".into()])
             .expect("Failed to generate self-signed cert");
     (
         vec![quinn::rustls::pki_types::CertificateDer::from(cert.der().to_vec())],
