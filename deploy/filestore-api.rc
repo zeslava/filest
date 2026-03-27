@@ -1,0 +1,68 @@
+#!/bin/sh
+
+# PROVIDE: filestore
+# REQUIRE: NETWORKING
+# KEYWORD: shutdown
+
+. /etc/rc.subr
+
+name="filestore"
+rcvar="filestore_enable"
+
+load_rc_config $name
+
+: ${filestore_enable:="NO"}
+: ${filestore_user:="www"}
+: ${filestore_env_file:="/usr/local/etc/filestore.env"}
+: ${filestore_log:="/var/log/filestore.log"}
+
+pidfile="/var/run/${name}/${name}.pid"
+command="/usr/local/bin/filestore"
+command_interpreter=""
+
+start_cmd="${name}_start"
+stop_cmd="${name}_stop"
+status_cmd="${name}_status"
+
+filestore_prestart()
+{
+    if [ ! -f "${filestore_env_file}" ]; then
+        echo "${filestore_env_file} not found"
+        return 1
+    fi
+    mkdir -p /var/run/${name}
+    chown ${filestore_user} /var/run/${name}
+    touch ${filestore_log}
+    chown ${filestore_user} ${filestore_log}
+}
+
+filestore_start()
+{
+    filestore_prestart || return 1
+    echo "Starting ${name}."
+    /usr/sbin/daemon -f -P ${pidfile} -o ${filestore_log} \
+        /usr/bin/su -m ${filestore_user} -c ". ${filestore_env_file} && exec ${command}"
+}
+
+filestore_stop()
+{
+    if [ -f "${pidfile}" ]; then
+        echo "Stopping ${name}."
+        kill $(cat ${pidfile}) 2>/dev/null
+        rm -f ${pidfile}
+    else
+        echo "${name} is not running."
+    fi
+}
+
+filestore_status()
+{
+    if [ -f "${pidfile}" ] && kill -0 $(cat ${pidfile}) 2>/dev/null; then
+        echo "${name} is running as pid $(cat ${pidfile})."
+    else
+        echo "${name} is not running."
+        return 1
+    fi
+}
+
+run_rc_command "$1"
