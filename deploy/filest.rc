@@ -13,7 +13,7 @@ load_rc_config $name
 
 : ${filest_enable:="NO"}
 : ${filest_user:="www"}
-: ${filest_env_file:="/usr/local/etc/filest.env"}
+: ${filest_env_file:="/usr/local/etc/filest/env"}
 : ${filest_log:="/var/log/filest.log"}
 
 pidfile="/var/run/${name}/${name}.pid"
