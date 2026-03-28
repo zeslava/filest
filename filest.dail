@@ -2,6 +2,7 @@ FROM 15.0-RELEASE
 
 COPY target/release/filest /usr/local/bin/filest
 
-EXPOSE 8090
+EXPOSE 8090/tcp
+EXPOSE 8090/udp
 
 SERVICE filest
