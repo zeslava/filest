@@ -1,7 +1,7 @@
 use axum::{
     Router,
     body::Body,
-    extract::Path,
+    extract::{DefaultBodyLimit, Path},
     http::{StatusCode, header},
     response::{IntoResponse, Response},
     routing::get,
@@ -52,6 +52,7 @@ async fn main() {
 
     let app = Router::new()
         .route("/{*path}", get(get_or_list).put(put_file).delete(delete_file).patch(patch_rename))
+        .layer(DefaultBodyLimit::max(100 * 1024 * 1024))
         .layer(ServiceBuilder::new().layer(TraceLayer::new_for_http()))
         .with_state(state);
 
